@@ -1,6 +1,7 @@
 from tkinter import *
 from pymongo import MongoClient 
 from tkinter import messagebox
+from tkinter import ttk
 #mongodb://localhost:27017/
 h1=("Arial",15,"bold")
 h2=('Arial',10,"bold")
@@ -150,6 +151,7 @@ def remove_student():
     
 
  remove_base=Tk()
+ remove_base.title("Remove student base")
  remove_base.geometry("600x600")
  remove_base.title("REMOVE STUDENT")
  heading=Label(remove_base,text="REMOVE STUDENT",font=h1)
@@ -228,6 +230,8 @@ def search_student():
     
     
     remove_base=Tk()
+    remove_base.title("Search student")
+    remove_base.title("Remove student")
     remove_base.geometry("600x600")
     remove_base.title("SEARCH STUDENT")
     heading=Label(remove_base,text="SEARCH STUDENT",font=h1)
@@ -288,17 +292,57 @@ def search_student():
     submit.place(x=500,y=95)
     remove_base.mainloop()
     
+    
+def get_all_students():
+    try:
+        con=MongoClient('localhost',27017) 
+        school=con['school']
+        student=school['student']
+        result=list(student.find({}))
+        return result;
+        
+    except:
+        print("something is wrong!")
+        con.close()
 def All_students():
-    find_base=Tk()
-    find_base.geometry("600x600")
-    find_base.title("All Students")
-    heading=Label(find_base,text="All Studnets",font=h1)
-    heading.place(x=200,y=50)
-    find_base.mainloop()
+    win = Tk()
+    win.title("All students")
+    win.geometry("1000x500")
+    style =ttk.Style()
+    style.theme_use('clam')
+    tree = ttk.Treeview(win, column=("Id", "Name", "DOB","Gender","Email","MO NO","ADDRESS"), show='headings')
+    tree.column("# 1", anchor=CENTER,width=170)
+    tree.heading("# 1", text="Id")
+    tree.column("# 2", anchor=CENTER,width=150)
+    tree.heading("# 2", text="Name")
+    tree.column("# 3", anchor=CENTER,width=150)
+    tree.heading("# 3", text="DOB")
+    tree.column("# 4", anchor=CENTER,width=150)
+    tree.heading("# 4", text="Gender")
+    tree.column("# 5", anchor=CENTER,width=70)
+    tree.heading("# 5", text="Email")
+    tree.column("# 6", anchor=CENTER,width=150)
+    tree.heading("# 6", text="MONO")
+    tree.column("# 7", anchor=CENTER,width=150)
+    tree.heading("# 7", text="ADDRESS")
+    result=get_all_students()
+    if result==[]:
+        Heading=Label(win,text="No such students present!",font=h1,anchor=CENTER)
+        Heading.pack()
+    else:
+        i=0;
+        while i < len(result):
+            tree.insert("","end",text='1',values=(result[i]['_id'],result[i]['name'],result[i]['dob'],result[i]['gender'],result[i]['email'],result[i]['mobile'],result[i]['address']))
+            i=i+1;
+        Heading=Label(win,text="All students",font=h1,anchor=CENTER)
+        Heading.pack()
+        tree.pack()
+    win.mainloop()
 #dashboard
 def login_function():
     base.destroy()
     dashboard=Tk()
+    dashboard.title("dashboard")
     dashboard.geometry('500x500')
     Heading=Label(dashboard,text="Dash Board",fg="red",font=h1,padx = 10, pady = 10)
     Heading.place(x=200,y=40)
@@ -312,8 +356,11 @@ def login_function():
     allstudentbtn.place(y=200,x=250)
     dashboard.mainloop()
 
+#create admin
+
 #main function is running
 base=Tk()
+base.title("login page")
 base.geometry('500x500')
 
 Heading=Label(base,text="Wel come to school",fg="red",font=h1)
@@ -327,8 +374,11 @@ password=Label(base,text="Password")
 password.pack()
 passwordinput=Entry(base)
 passwordinput.pack()
-loginbtn=Button(text="Login",command=login_function)
-loginbtn.pack()
+
+loginbtn=Button(base,text="Login",command=login_function,bg='blue')
+loginbtn.place(y=130,x=220)
+signbtn=Button(base,text="create admin")
+signbtn.place(y=180,x=200)
 
 
 exit=Button(base,text="exit", bg="red",command=base.destroy)
