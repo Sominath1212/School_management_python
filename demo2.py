@@ -28,7 +28,7 @@ def signup():
                 
                      
         signuppage=Tk()
-        signuppage.title("login page")
+        signuppage.title("Sign Up page")
         signuppage.geometry('500x500')
 
         Heading=Label(signuppage,text="Wel come to school",fg="red",font=h1)
