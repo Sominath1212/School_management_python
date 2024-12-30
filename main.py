@@ -5,7 +5,9 @@ from tkinter import ttk
 #mongodb://localhost:27017/
 h1=("Arial",15,"bold")
 h2=('Arial',10,"bold")
-
+base=Tk()
+base.title("login page")
+base.geometry('500x500')
 def find_record1(q):
      try:
        con=MongoClient("localhost",27017)
@@ -35,9 +37,10 @@ def newaddmission():
       gender=genderinput.get()
       
       if name=="" and dob==""and gender==""and address==""and email=="" and mobile=="":
-          messagebox.showwarning(title="Incomplete imformation",message="please fill the all fields")
           add_form.destroy()
-          add_form.mainloop()
+          messagebox.showwarning(title="Incomplete imformation",message="please fill the all fields")
+        #   
+        #   add_form.mainloop()
           return
       else:   
           q={"name":name,"dob":dob, "gender":gender, "address":address,"email":email,'mobile':mobile}
@@ -144,6 +147,7 @@ def find_record(q):
             print("something is wrong")
             con.close()
             return True
+
 
     
 #remove student
@@ -338,8 +342,29 @@ def All_students():
         Heading.pack()
         tree.pack()
     win.mainloop()
+    
+
+def findAdmin(findq):
+     try:
+       con=MongoClient("localhost",27017)
+       school=con['school']
+       admins=school['admins']
+       result=admins.find_one(findq)
+       
+       if result != None:
+           con.close()
+           return True
+           
+       else:
+           return False
+       
+     except:
+        print("something is wrong")
+        con.close()
+        return True
 #dashboard
 def login_function():
+    base.destroy()
     dashboard=Tk()
     dashboard.title("dashboard")
     dashboard.geometry('500x500')
@@ -355,31 +380,43 @@ def login_function():
     allstudentbtn.place(y=200,x=250)
     dashboard.mainloop()
 
-#create admin
-
+def checkAdmin():
+    def setvalues():
+        email=emailinput.get()
+        password=passwordinput.get()
+        findq={"email":email,"password":password}
+        is_admin=findAdmin(findq)
+        if is_admin:            
+           login_function()           
+        else:
+            messagebox.showinfo(title="Admin Authorization",message="Email and password is wrong")
+    
+    setvalues()
+    
 #main function is running
-base=Tk()
-base.title("login page")
-base.geometry('500x500')
 
-Heading=Label(base,text="Wel come to school",fg="red",font=h1)
+
+Heading=Label(base,text="Wel come to \nSwami Vivikananda Vidyalay",fg="red",font=h1)
 Heading.pack()
-login=Label(base,text="User Name")
+login=Label(base,text="Admin Email")
 login.pack()
-logininput=Entry(base)
-logininput.pack()
+emailinput=Entry(base)
+emailinput.pack()
 
 password=Label(base,text="Password")
 password.pack()
-passwordinput=Entry(base)
+passwordinput=Entry(base,show="*")
 passwordinput.pack()
 
-loginbtn=Button(base,text="Login",command=login_function,bg='blue')
-loginbtn.place(y=130,x=220)
-signbtn=Button(base,text="create admin")
-signbtn.place(y=180,x=200)
+
+
+loginbtn=Button(base,text="Login",command=checkAdmin,bg='blue')
+loginbtn.place(y=150,x=220)
+# signbtn=Button(base,text="create admin")
+# signbtn.place(y=180,x=200)
 
 
 exit=Button(base,text="exit", bg="red",command=base.destroy)
 exit.place(y=10,x=450)
 base.mainloop()
+
