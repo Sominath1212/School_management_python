@@ -340,7 +340,6 @@ def All_students():
     win.mainloop()
 #dashboard
 def login_function():
-    base.destroy()
     dashboard=Tk()
     dashboard.title("dashboard")
     dashboard.geometry('500x500')
